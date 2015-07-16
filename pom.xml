@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>biz.neustar</groupId>
 	<artifactId>neustar-discovery-service</artifactId>
-	<packaging>${packaging.type}</packaging>
+	<packaging>war</packaging>
 	<version>0.8-SNAPSHOT</version>
 	<name>neustar-discovery-service</name>
 
@@ -109,6 +109,118 @@
 
 	</build>
 
+	<profiles>
+
+		<profile>
+
+			<id>ote</id>
+
+			<build>
+
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>execution1</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy overwrite="true"
+											file="${project.basedir}/src/main/webapp/WEB-INF/applicationContext.xml.ote"
+											tofile="${project.basedir}/src/main/webapp/WEB-INF/applicationContext.xml" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+
+			</build>
+
+		</profile>
+
+		<profile>
+
+			<id>otelocal</id>
+
+			<build>
+
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>execution1</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy overwrite="true"
+											file="${project.basedir}/src/main/webapp/WEB-INF/applicationContext.xml.otelocal"
+											tofile="${project.basedir}/src/main/webapp/WEB-INF/applicationContext.xml" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+
+			</build>
+
+		</profile>
+
+		<profile>
+
+			<id>prod</id>
+
+			<build>
+
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>execution1</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<copy overwrite="true"
+											file="${project.basedir}/src/main/webapp/WEB-INF/applicationContext.xml.prod"
+											tofile="${project.basedir}/src/main/webapp/WEB-INF/applicationContext.xml" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+
+			</build>
+
+		</profile>
+
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -128,169 +240,24 @@
 			<version>1.6.1</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>xdi2</groupId>
+			<artifactId>xdi2-client</artifactId>
+			<version>0.8-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>xdi2</groupId>
+			<artifactId>xdi2-messaging-target</artifactId>
+			<version>0.8-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>xdi2</groupId>
+			<artifactId>xdi2-transport-http</artifactId>
+			<version>0.8-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
-
-	<profiles>
-
-		<profile>
-
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-
-			<properties>
-				<packaging.type>war</packaging.type>
-			</properties>
-
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>2.4</version>
-					</plugin>
-					<plugin>
-						<groupId>org.mortbay.jetty</groupId>
-						<artifactId>maven-jetty-plugin</artifactId>
-						<version>6.1.26</version>
-						<configuration>
-							<jettyEnvXml>
-								${basedir}/src/test/resources/jetty-env.xml
-							</jettyEnvXml>
-							<contextPath>/</contextPath>
-							<useTestClasspath>true</useTestClasspath>
-							<systemProperties>
-								<systemProperty>
-									<name>jetty.port</name>
-									<value>12220</value>
-								</systemProperty>
-								<systemProperty>
-									<name>slf4j</name>
-									<value>true</value>
-								</systemProperty>
-								<systemProperty>
-									<name>log4j.configuration</name>
-									<value>file:${basedir}/src/test/resources/log4j.properties</value>
-								</systemProperty>
-							</systemProperties>
-						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.slf4j</groupId>
-								<artifactId>slf4j-api</artifactId>
-								<version>1.7.5</version>
-								<scope>compile</scope>
-							</dependency>
-							<dependency>
-								<groupId>org.slf4j</groupId>
-								<artifactId>jcl-over-slf4j</artifactId>
-								<version>1.7.5</version>
-								<scope>compile</scope>
-							</dependency>
-							<dependency>
-								<groupId>org.slf4j</groupId>
-								<artifactId>slf4j-log4j12</artifactId>
-								<version>1.7.5</version>
-								<scope>compile</scope>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
-
-			<dependencies>
-				<dependency>
-					<groupId>xdi2</groupId>
-					<artifactId>xdi2-client</artifactId>
-					<version>0.8-SNAPSHOT</version>
-					<scope>compile</scope>
-				</dependency>
-				<dependency>
-					<groupId>xdi2</groupId>
-					<artifactId>xdi2-messaging-target</artifactId>
-					<version>0.8-SNAPSHOT</version>
-					<scope>compile</scope>
-				</dependency>
-				<dependency>
-					<groupId>xdi2</groupId>
-					<artifactId>xdi2-transport-http</artifactId>
-					<version>0.8-SNAPSHOT</version>
-					<scope>compile</scope>
-				</dependency>
-			</dependencies>
-
-		</profile>
-
-		<profile>
-
-			<id>xdi2-plugin</id>
-
-			<properties>
-				<packaging.type>jar</packaging.type>
-			</properties>
-
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.1</version>
-						<executions>
-							<execution>
-								<id>execution</id>
-								<phase>package</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<includeScope>runtime</includeScope>
-						</configuration>
-					</plugin>
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.3</version>
-						<executions>
-							<execution>
-								<id>src</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<outputDirectory>${project.build.directory}/assembly</outputDirectory>
-							<descriptors>
-								<descriptor>
-									${project.basedir}/assembly-descriptor.xml
-								</descriptor>
-							</descriptors>
-							<tarLongFileMode>gnu</tarLongFileMode>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-
-			<dependencies>
-				<dependency>
-					<groupId>xdi2</groupId>
-					<artifactId>xdi2-client</artifactId>
-					<version>0.8-SNAPSHOT</version>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>xdi2</groupId>
-					<artifactId>xdi2-transport-http</artifactId>
-					<version>0.8-SNAPSHOT</version>
-					<scope>provided</scope>
-				</dependency>
-			</dependencies>
-
-		</profile>
-
-	</profiles>
 
 </project>

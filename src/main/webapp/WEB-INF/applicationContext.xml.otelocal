@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+	<!-- XDI ENDPOINT REGISTRY AND TRANSPORT -->
+
+	<bean id="UriMessagingTargetRegistry" class="xdi2.transport.registry.impl.uri.UriMessagingTargetRegistry" init-method="init" destroy-method="shutdown" />
+
+	<bean id="HttpTransport" class="xdi2.transport.impl.http.HttpTransport" init-method="init" destroy-method="shutdown">
+		<property name="uriMessagingTargetRegistry" ref="UriMessagingTargetRegistry" />
+		<property name="interceptors">
+			<util:list>
+				<bean class="xdi2.transport.impl.http.interceptor.impl.DebugHttpTransportInterceptor">
+					<property name="path" value="/admin" />
+				</bean>
+				<bean class="xdi2.transport.impl.http.interceptor.impl.StatusHttpTransportInterceptor">
+					<property name="path" value="/status" />
+				</bean>
+			</util:list>
+		</property>
+	</bean>
+
+	<!-- SPRING -->
+
+	<bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="xdi2.transport.spring.XDI2SpringConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- DISCOVERY MESSAGING TARGET -->
+
+	<bean name="discoveryContributor" class="biz.neustar.discovery.DiscoveryContributor">
+		<property name="resolver">
+			<bean class="biz.neustar.discovery.resolver.XRI2XNSResolver">
+				<property name="authorityPersonalEndpointUrl" value="http://equalote.xdi.net/"/>
+				<property name="authorityLegalEndpointUrl" value="http://plusote.xdi.net/"/>
+			</bean>
+		</property>
+	</bean>
+
+	<bean name="/" class="xdi2.messaging.target.impl.n.NullMessagingTarget">
+		<property name="interceptors">
+			<util:list>
+				<ref bean="discoveryContributor" />
+				<bean class="xdi2.messaging.target.interceptor.impl.RefInterceptor" />
+			</util:list>
+		</property>
+		<property name="contributors">
+			<util:list>
+				<ref bean="discoveryContributor" />
+			</util:list>
+		</property>
+	</bean>
+
+</beans>
