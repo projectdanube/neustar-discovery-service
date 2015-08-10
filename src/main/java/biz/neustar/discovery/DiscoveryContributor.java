@@ -100,7 +100,7 @@ public class DiscoveryContributor extends AbstractContributor implements Message
 		String canonicalId = xrd.getCanonicalId();
 		if (canonicalId == null) throw new Xdi2MessagingException("Unable to read CanonicalId from XRD.", null, executionContext);
 
-		String iNumber = workaroundStarShift(canonicalId);
+		String iNumber = workaroundLowerCase(workaroundStarShift(canonicalId));
 		CloudNumber cloudNumber = XRI2Util.iNumberToCloudNumber(iNumber);
 		if (cloudNumber == null) cloudNumber = CloudNumber.create(iNumber);
 		if (cloudNumber == null) throw new Xdi2MessagingException("Unable to read Cloud Number from CanonicalId: " + canonicalId, null, executionContext);
@@ -222,7 +222,7 @@ public class DiscoveryContributor extends AbstractContributor implements Message
 				String uriXdiInstanceUnorderedLiteral = XDIArc.literalFromDigest(uri);
 
 				XdiAttributeInstance uriXdiAttributeInstance = uriXdiAttributeCollection.setXdiInstanceUnordered(true, false, uriXdiInstanceUnorderedLiteral);
-				uriXdiAttributeInstance.setLiteralDataString(uri);
+				uriXdiAttributeInstance.setLiteralData(uri);
 
 				XdiAttributeCollection typeXdiAttributeCollection = requestedXdiPeerRoot.getXdiAttributeSingleton(typeXdiArcXri, true).getXdiAttributeCollection(XRI_ARC_AC_URI, true);
 				XdiAttributeInstance typeXdiAttributeInstance = typeXdiAttributeCollection.setXdiInstanceOrdered(false, false, -1);
@@ -323,6 +323,15 @@ public class DiscoveryContributor extends AbstractContributor implements Message
 		string = string.replace("[+]!:", "+!:");
 		string = string.replace("%5B%3D%5D", "%3D");
 		string = string.replace("%5B%2B%5D", "%2B");
+
+		return string;
+	}
+
+	private static String workaroundLowerCase(String string) {
+
+		if (string == null) return null;
+
+		string = string.toLowerCase();
 
 		return string;
 	}
